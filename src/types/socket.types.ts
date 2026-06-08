@@ -1,4 +1,5 @@
 import {EVENTS} from "../constants/events.js";
+import type { IUserPayload } from "./user.types.js";
 
 export interface ServerToClientEvents  {
     [EVENTS.WELCOME]: (message: string) => void;
@@ -16,10 +17,5 @@ export interface ClientToServerEvents  {
 }
 
 export interface SocketData {
-    user: {
-        userId: string,
-        name: string,
-        email: string,
-        role: string
-    }
+    user: IUserPayload
 }

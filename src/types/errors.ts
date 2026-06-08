@@ -7,3 +7,7 @@ export class AppError extends Error {
         this.name = "AppError";
     }
 }
+
+export interface ErrorResponse {
+  message: string;
+}

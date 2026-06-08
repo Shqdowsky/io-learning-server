@@ -3,12 +3,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AppError } from "../types/errors.js";
 import { env } from "../config/env.js";
+import type { AuthResult, AppJwtPayload } from "../types/auth.types.js";
 
 export async function register(name: string, email: string, password: string){
     const hashpass = await bcrypt.hash(password, 3);
     await User.create({name, email, password: hashpass});
 }
-export async function login(email: string, password: string){
+export async function login(email: string, password: string): Promise<AuthResult>{
     const candidate = await User.findOne({email});
     if(!candidate){
         throw new AppError("Such user doesn't exist", 400);
@@ -17,18 +18,19 @@ export async function login(email: string, password: string){
     if(!isPassEquals){
         throw new AppError("Pasword doesn't match", 400);
     }
+    const payload: AppJwtPayload = {
+        userId: candidate._id.toString(),
+        name: candidate.name,
+        email: candidate.email,
+        role: candidate.role
+    }
     const token = jwt.sign(
-        {
-            userId: candidate._id,
-            name: candidate.name,
-            email: candidate.email,
-            role: candidate.role
-        },
+        payload,
         env.JWT_SECRET,
         { expiresIn: '1h' }
     )
     return {token, user: {
-        id: candidate._id,
+        userId: candidate._id.toString(),
         name: candidate.name,
         email: candidate.email,
         role: candidate.role

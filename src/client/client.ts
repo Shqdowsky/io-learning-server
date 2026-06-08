@@ -4,6 +4,7 @@ import * as readline from "readline";
 import { EVENTS } from "../constants/events.js";
 import { socketConfig } from "../config/socket.js";
 import type { ServerToClientEvents, ClientToServerEvents } from "../types/socket.types.js";
+import type { AuthResult } from "../types/auth.types.js";
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -16,9 +17,33 @@ const question = (prompt: string): Promise<string> =>
 const email = await question("Email: ");
 const password = await question("Password: ");
 
-const { data } = await axios.post("http://localhost:3000/auth/login", { email, password });
-const token = data.token;
-console.log("Logged in successfully");
+let token: string | undefined; 
+
+try {
+    const { data } = await axios.post<AuthResult>(
+        "http://localhost:3000/auth/login",
+        { email, password }
+    );
+    token = data.token;
+    if (!token) {
+        console.log("Cannot connect without a valid token");
+        process.exit(1);
+    }
+    console.log("Logged in successfully");
+
+} catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+        console.log(error.response?.data?.message || "Server error");
+        process.exit(1);
+    }
+    if (error instanceof Error) {
+        console.log(error.message);
+        process.exit(1);
+    }
+    console.log("Unknown error occurred");
+    process.exit(1);
+}
+
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost:3000", {
     auth: {token},

@@ -1,6 +1,7 @@
 import { type Socket } from "socket.io";
 import type{ ClientToServerEvents, ServerToClientEvents, SocketData } from "../types/socket.types.js";
 import { verifyToken } from "../utils/verifyToken.js";
+import type { AppJwtPayload } from "../types/auth.types.js";
 
 type AuthToken = Socket<ClientToServerEvents, ServerToClientEvents, {}, SocketData>
 
@@ -10,7 +11,7 @@ export function socketAuth(socket: AuthToken, next: (error?: Error) => void){
         return next(new Error("No token provided"));
     }
     try{
-        const payload = verifyToken(token);
+        const payload = verifyToken(token) as AppJwtPayload;
         socket.data.user = {
             userId: payload.userId,
             name: payload.name,

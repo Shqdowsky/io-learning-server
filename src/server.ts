@@ -4,7 +4,6 @@ import type{ ServerToClientEvents, ClientToServerEvents, SocketData } from "./ty
 import { socketAuth } from "./middleware/socketAuth.js";
 import {connectDB} from "./config/db.js"
 import { registerHandlers } from "./handlers/index.js";
-import path from "path";
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(httpserver);
 
