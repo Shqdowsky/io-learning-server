@@ -17,13 +17,13 @@ export function getRoomCount(io: IoType, room: string): number {
 export function joinRoom(io: IoType, socket: SocketType, room: string){
     socket.join(room);
     const memberCount = getRoomCount(io, room);
-    socket.emit(EVENTS.ROOM_JOINED, {
+    socket.to(room).emit(EVENTS.ROOM_JOINED, {
         room,
         memberId: socket.id,
         message: `${socket.data.user.name} joined the room`
     });
 
-    socket.emit(EVENTS.WELCOME, 
+    socket.to(room).emit(EVENTS.WELCOME, 
         `Joined ${room} — ${memberCount} member${memberCount === 1 ? "" : "s"} online`
     );
 }

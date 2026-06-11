@@ -1,10 +1,10 @@
 import { io, Socket } from "socket.io-client";
 import axios from "axios";
 import * as readline from "readline";
-import { EVENTS } from "../constants/events.js";
-import { socketConfig } from "../config/socket.js";
-import type { ServerToClientEvents, ClientToServerEvents } from "../types/socket.types.js";
-import type { AuthResult } from "../types/auth.types.js";
+import { EVENTS } from "./constants/events.js";
+import { socketConfig } from "./config/socket.js";
+import type { ServerToClientEvents, ClientToServerEvents } from "./types/socket.types.js";
+import type { AuthResult } from "./types/auth.types.js";
 
 const rl = readline.createInterface({
     input: process.stdin,
